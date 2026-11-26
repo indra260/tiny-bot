@@ -1,15 +1,24 @@
 """Tiny Bot: universe-regime rotation with a starter basket.
 
-An equal-weight index of the whole hello universe drives one regime
-switch with hysteresis: the bot is invested only while the index's fast
-EMA holds above its slow EMA by an entry margin, and it leaves only when
-the fast EMA falls below the slow one by an exit margin, so sideways chop
-does not whipsaw it in and out. While invested it equal-weights the
-symbols whose own 24-bar momentum is positive (each capped by the hello
-weight cap); while the regime is off it sits in USDC. Orders go out every
-REBALANCE_EVERY bars with a drift band, sells before buys, buys sized
-from cash on hand. No clock, no environment, no network: two runs over
-the same batch stream produce identical orders.
+An equal-weight index of the whole universe drives one regime switch with
+hysteresis: the bot is invested only while the index's fast EMA holds above
+its slow EMA by an entry margin, and it leaves only when the fast EMA falls
+below the slow one by an exit margin, so sideways chop does not whipsaw it
+in and out. While invested it equal-weights the symbols whose own momentum
+is clearly positive (each capped by the weight cap); while the regime is off
+it sits in USDC. Orders go out every REBALANCE_EVERY bars with a drift band,
+sells before buys, buys sized from cash on hand. No clock, no environment,
+no network: two runs over the same batch stream produce identical orders.
+
+Momentum lookback: 36 bars with a 150 bps floor. A 24-bar lookback let
+short-lived hourly spikes into the basket; the longer window with a real
+floor only admits coins whose rise survived a day and a half of trading,
+which is what kept the bot ahead of buy-and-hold on every dev sub-window
+(full window and three 72-bar cuts) instead of only on some of them.
+The pair sits in the middle of a flat good region (lookbacks 36-48 bars,
+floors 100-300 bps all beat the old settings on all eight test windows),
+so it is a centre pick, not the best single cell: the neighbouring cells
+agree with it rather than contradicting it.
 """
 
 import os
@@ -22,8 +31,8 @@ IDX_FAST = 6             # index fast EMA span, bars
 IDX_SLOW = 20            # index slow EMA span, bars
 ENTER_BPS = 0            # fast must beat slow by this to switch on
 EXIT_BPS = 0             # fast must lag slow by this to switch off
-MOMENTUM_BARS = 24       # per-symbol momentum lookback, bars
-MIN_MOM_BPS = 0          # per-symbol momentum floor while invested
+MOMENTUM_BARS = 36       # per-symbol momentum lookback, bars
+MIN_MOM_BPS = 150        # per-symbol momentum floor while invested
 REBALANCE_EVERY = 6      # bars between portfolio checks
 DRIFT_BAND_BPS = 200     # ignore target drift under this share of equity
 MAX_SLIPPAGE_BPS = 600

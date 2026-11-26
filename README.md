@@ -28,7 +28,7 @@ replay protocol through the vendored SDK shim in `vendor/makefun_bars.py`:
   never caught flat-footed by a window that trends from the first hours,
   and never fails the minimum-trades guardrail for want of activity.
 - **Selection.** While invested it equal-weights the symbols whose own
-  24-bar momentum is positive, each capped by the competition's 25%
+  36-bar momentum is at least 150 bps, each capped by the competition's 25%
   weight cap, dropping names that are falling even inside a rising
   universe.
 - **Discipline.** The portfolio is checked every 6 bars; positions are
@@ -48,7 +48,7 @@ kit's own grader (`grade-local --driver process`):
 
 | Entry | Net PnL (USDC) | Trades | Max drawdown |
 | --- | ---: | ---: | ---: |
-| **Tiny Bot (this entry)** | **-287.75** | 50 | 4.1% |
+| **Tiny Bot (this entry)** | **-115.74** | 32 | 2.4% |
 | House buy-and-hold (the prize bar) | -869.34 | 7 | 10.9% |
 | House momentum | -268.23 | 19 | 5.7% |
 | House EMA cross | -173.04 | 28 | 2.5% |
@@ -58,8 +58,8 @@ The dev window is a falling, choppy market, so every active entry loses;
 the point of the design is the margin over buy-and-hold, which the bot
 also holds on each fresh-start 72-bar sub-window of the dev data
 (the final window is three days): it beat buy-and-hold on all four
-windows tested, by +29 to +565 USDC, with 18–50 trades and drawdown
-under 4.2% on each — comfortably inside the guardrails (≥8 trades,
+windows tested, by +71 to +667 USDC, with 14–32 trades and drawdown
+under 2.5% on each — comfortably inside the guardrails (≥8 trades,
 ≤25% drawdown).
 
 ## Layout
