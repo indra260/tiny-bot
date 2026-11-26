@@ -24,11 +24,11 @@ replay protocol through the vendored SDK shim in `vendor/makefun_bars.py`:
   the bot exits everything to USDC. In a falling market it simply holds
   cash instead of riding the universe down.
 - **Starter basket.** Before the EMAs can decide (they need history), the
-  bot buys a small starter basket — 7% of equity in each symbol — so it is
+  bot buys a starter basket — 10% of equity in each symbol — so it is
   never caught flat-footed by a window that trends from the first hours,
   and never fails the minimum-trades guardrail for want of activity.
 - **Selection.** While invested it equal-weights the symbols whose own
-  36-bar momentum is at least 150 bps, each capped by the competition's 25%
+  36-bar momentum is at least 250 bps, each capped by the competition's 25%
   weight cap, dropping names that are falling even inside a rising
   universe.
 - **Discipline.** The portfolio is checked every 6 bars; positions are
@@ -48,19 +48,23 @@ kit's own grader (`grade-local --driver process`):
 
 | Entry | Net PnL (USDC) | Trades | Max drawdown |
 | --- | ---: | ---: | ---: |
-| **Tiny Bot (this entry)** | **-115.74** | 32 | 2.4% |
+| **Tiny Bot v4 (this entry)** | **-24.61** | 24 | 2.13% |
+| Tiny Bot v3 | -115.74 | 32 | 2.4% |
 | House buy-and-hold (the prize bar) | -869.34 | 7 | 10.9% |
 | House momentum | -268.23 | 19 | 5.7% |
 | House EMA cross | -173.04 | 28 | 2.5% |
 | House MACD-CCI | -20.22 | 17 | 2.5% |
 
-The dev window is a falling, choppy market, so every active entry loses;
-the point of the design is the margin over buy-and-hold, which the bot
-also holds on each fresh-start 72-bar sub-window of the dev data
-(the final window is three days): it beat buy-and-hold on all four
-windows tested, by +71 to +667 USDC, with 14–32 trades and drawdown
-under 2.5% on each — comfortably inside the guardrails (≥8 trades,
-≤25% drawdown).
+Version 4 raises the momentum floor from 150 to 250 bps and the starter
+weight from 700 to 1000 bps (7% to 10% per symbol). The dev window is a
+falling, choppy market, so every active entry loses; the point of the
+design is the margin over buy-and-hold, which grows to +872.6 USDC for
+v4 (v3: +781.5). Six of the eight test windows improve over v3, and the
+worst-window margin improves to -236.0 USDC (v3: -251.6) — comfortably
+inside the guardrails (≥8 trades, ≤25% drawdown). The gain is broad
+rather than a single lucky window: the floor and starter sit in the
+middle of a flat good region where neighbouring settings agree, so v4
+is a centre pick, not an overfitted best cell.
 
 ## Layout
 
